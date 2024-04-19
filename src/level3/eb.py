@@ -1,7 +1,5 @@
-import os
-import sys
-
 import numpy as np
+
 
 def get_paths(shape, lawn, input):
     paths = []
@@ -10,9 +8,9 @@ def get_paths(shape, lawn, input):
         for j in range(shape[1]):
             path = np.array(lawn)
             pos = [i, j]
+            if path[pos[0]][pos[1]] == 1:
+                continue
             path[pos[0]][pos[1]] = 1
-            if (i == 2 and j == 1):
-                print("a")
             flag = True
             # Count the number of each direction
             for direction in input:
@@ -24,15 +22,22 @@ def get_paths(shape, lawn, input):
                     pos[0] += 1
                 elif direction == "A":
                     pos[1] += 1
-                if pos[0] < 0 or pos[0] >= shape[0] or pos[1] < 0 or pos[1] >= shape[1] or path[pos[0]][pos[1]] == 1:
+                if (
+                    pos[0] < 0
+                    or pos[0] >= shape[0]
+                    or pos[1] < 0
+                    or pos[1] >= shape[1]
+                    or path[pos[0]][pos[1]] == 1
+                ):
                     flag = False
                     break
                 path[pos[0]][pos[1]] = 1
             if flag:
                 if np.all(path == 1):
-                    return True#paths.append(path)
+                    return True  # paths.append(path)
 
     return paths
+
 
 def parse_input_file(file_path: str):
     with open(file_path, "r") as file:
@@ -70,13 +75,25 @@ if __name__ == "__main__":
     inputs_dir = "inputs"
     outputs_dir = "outputs"
 
-    for i in range(0, 1):
+    for i in range(0, 6):
         input_file = f"{inputs_dir}/level3_{i}.in"
-        input_str = parse_input_file(input_file)
+        inputs_list = parse_input_file(input_file)
 
-        for j in range(len(input_str[0]) + 1):
-            print(input_str[j])
-            if get_paths(input_str[j][0], input_str[j][1], input_str[j][2]):
-                print("VALID")
+        output_file = f"{outputs_dir}/level3be_{i}.out"
+
+        results = []
+
+        for input in inputs_list:
+
+            dimensions, matrix, path = input
+
+            is_valid = get_paths(dimensions, matrix, path)
+
+            if is_valid:
+                results.append("VALID")
             else:
-                print("INVALID")
+                results.append("INVALID")
+
+        with open(output_file, "w") as file:
+            for result in results:
+                file.write(result + "\n")
