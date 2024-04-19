@@ -1,44 +1,35 @@
-def parse_validity(dimensions, matrix, path):
+def parse_validity(dimensions, matrix, path, starting_x, starting_y):
 
     width, height = dimensions
 
-    for starting_x in range(0, width):
-        for starting_y in range(0, height):
+    matrix_copy = [row[:] for row in matrix]
 
-            matrix_copy = [row[:] for row in matrix]
+    cur_x = starting_x
+    cur_y = starting_y
 
-            cur_x = starting_x
-            cur_y = starting_y
+    if matrix_copy[cur_y][cur_x] == 1:
+        return False
+    matrix_copy[cur_y][cur_x] = 1
 
-            if matrix_copy[cur_y][cur_x] == 1:
-                continue
-            matrix_copy[cur_y][cur_x] = 1
+    for direction in path:
+        if direction == "W":
+            cur_y -= 1
+        elif direction == "D":
+            cur_x += 1
+        elif direction == "S":
+            cur_y += 1
+        elif direction == "A":
+            cur_x -= 1
 
-            broken = False
+        if cur_x < 0 or cur_x >= width or cur_y < 0 or cur_y >= height:
+            return False
 
-            for direction in path:
-                if direction == "W":
-                    cur_y -= 1
-                elif direction == "D":
-                    cur_x += 1
-                elif direction == "S":
-                    cur_y += 1
-                elif direction == "A":
-                    cur_x -= 1
+        if matrix_copy[cur_y][cur_x] == 1:
+            return False
+        matrix_copy[cur_y][cur_x] = 1
 
-                if cur_x < 0 or cur_x >= width or cur_y < 0 or cur_y >= height:
-                    broken = True
-                    break
-
-                if matrix_copy[cur_y][cur_x] == 1:
-                    broken = True
-                    break
-                matrix_copy[cur_y][cur_x] = 1
-
-            if not broken and all(
-                all(cell == 1 for cell in row) for row in matrix_copy
-            ):
-                return True
+    if all(all(cell == 1 for cell in row) for row in matrix_copy):
+        return True
     return False
 
 
@@ -65,7 +56,8 @@ def parse_input_file(
                 # Grab a line
                 input_line = file.readline().strip()
                 for char in range(0, width):
-                    if input_line[char] == "X":
+                    # Check both x and X
+                    if input_line[char] == "x" or input_line[char] == "X":
                         matrix[line][char] = 1
 
             inputs.append(((width, height), matrix))
@@ -89,7 +81,15 @@ if __name__ == "__main__":
 
             dimensions, matrix = input
 
-            print(dimensions, matrix)
+            print(
+                parse_validity(
+                    dimensions,
+                    matrix,
+                    "AAASDDDSAAASDDSAASDDSAASDDDWWWDSSSDWWWDSSSDWWWWAAAWDDDWAAAWDDD",
+                    3,
+                    0,
+                )
+            )
 
             # is_valid = parse_validity(dimensions, matrix)
 
@@ -98,6 +98,6 @@ if __name__ == "__main__":
             # else:
             #     results.append("INVALID")
 
-        with open(output_file, "w") as file:
-            for result in results:
-                file.write(result + "\n")
+        # with open(output_file, "w") as file:
+        #     for result in results:
+        #         file.write(result + "\n")
