@@ -14,6 +14,8 @@ def parse_validity(dimensions, matrix, path):
                 continue
             matrix_copy[cur_y][cur_x] = 1
 
+            broken = False
+
             for direction in path:
                 if direction == "W":
                     cur_y -= 1
@@ -25,15 +27,18 @@ def parse_validity(dimensions, matrix, path):
                     cur_x -= 1
 
                 if cur_x < 0 or cur_x >= width or cur_y < 0 or cur_y >= height:
+                    broken = True
                     break
 
                 if matrix_copy[cur_y][cur_x] == 1:
+                    broken = True
                     break
                 matrix_copy[cur_y][cur_x] = 1
 
-            if all(all(cell == 1 for cell in row) for row in matrix_copy):
+            if not broken and all(
+                all(cell == 1 for cell in row) for row in matrix_copy
+            ):
                 return True
-
     return False
 
 
@@ -79,7 +84,7 @@ if __name__ == "__main__":
         input_file = f"{inputs_dir}/level3_{i}.in"
         inputs_list = parse_input_file(input_file)
 
-        output_file = f"{outputs_dir}/level3_{i}.out"
+        output_file = f"{outputs_dir}/level3a_{i}.out"
 
         results = []
 
