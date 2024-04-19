@@ -1,6 +1,6 @@
-for file in range(1, 6):
+for file in range(0, 6):
     in_file = open(f"inputs/level1_{file}.in", "r")
-    out_file = open(f"outputs/level1_{file}.out", "w")
+    out_file = open(f"outputs/mbh_level1_{file}.out", "w")
 
     paths = int(in_file.readline())
     for i in range(paths):
