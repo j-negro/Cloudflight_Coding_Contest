@@ -1,32 +1,45 @@
-# def parse_validity(input: str):
-#     cur_height = 0
-#     cur_width = 0
+def parse_validity(dimensions, matrix, path):
 
-#     max_height = 0
-#     max_width = 0
+    width, height = dimensions
 
-#     min_height = 0
-#     min_width = 0
+    for starting_x in range(0, width):
+        for starting_y in range(0, height):
 
-#     # Count the number of each direction
-#     for direction in input:
-#         if direction == "W":
-#             cur_height += 1
-#             max_height = max(max_height, cur_height)
-#         elif direction == "D":
-#             cur_width += 1
-#             max_width = max(max_width, cur_width)
-#         elif direction == "S":
-#             cur_height -= 1
-#             min_height = min(min_height, cur_height)
-#         elif direction == "A":
-#             cur_width -= 1
-#             min_width = min(min_width, cur_width)
+            matrix_copy = [row[:] for row in matrix]
 
-#     return max_width - min_width + 1, max_height - min_height + 1
+            cur_x = starting_x
+            cur_y = starting_y
+
+            if matrix_copy[cur_y][cur_x] == 1:
+                continue
+            matrix_copy[cur_y][cur_x] = 1
+
+            for direction in path:
+                if direction == "W":
+                    cur_y -= 1
+                elif direction == "D":
+                    cur_x += 1
+                elif direction == "S":
+                    cur_y += 1
+                elif direction == "A":
+                    cur_x -= 1
+
+                if cur_x < 0 or cur_x >= width or cur_y < 0 or cur_y >= height:
+                    break
+
+                if matrix_copy[cur_y][cur_x] == 1:
+                    break
+                matrix_copy[cur_y][cur_x] = 1
+
+            if all(all(cell == 1 for cell in row) for row in matrix_copy):
+                return True
+
+    return False
 
 
-def parse_input_file(file_path: str):
+def parse_input_file(
+    file_path: str,
+) -> list[tuple[tuple[int, int], list[list[int]], str]]:
     with open(file_path, "r") as file:
 
         inputs = []
@@ -55,8 +68,6 @@ def parse_input_file(file_path: str):
 
             inputs.append(((width, height), matrix, path))
 
-            return inputs
-
         return inputs
 
 
@@ -64,19 +75,25 @@ if __name__ == "__main__":
     inputs_dir = "inputs"
     outputs_dir = "outputs"
 
-    for i in range(1, 2):
+    for i in range(0, 6):
         input_file = f"{inputs_dir}/level3_{i}.in"
-        input_str = parse_input_file(input_file)
+        inputs_list = parse_input_file(input_file)
 
-        print(input_str)
+        output_file = f"{outputs_dir}/level3_{i}.out"
 
-        # output_file = f"{outputs_dir}/level2_{i}.out"
+        results = []
 
-        # results = []
+        for input in inputs_list:
 
-        # for input in input_str:
-        #     results.append(parse_validity(input))
+            dimensions, matrix, path = input
 
-        # with open(output_file, "w") as file:
-        #     for result in results:
-        #         file.write(" ".join(map(str, result)) + "\n")
+            is_valid = parse_validity(dimensions, matrix, path)
+
+            if is_valid:
+                results.append("VALID")
+            else:
+                results.append("INVALID")
+
+        with open(output_file, "w") as file:
+            for result in results:
+                file.write(result + "\n")
