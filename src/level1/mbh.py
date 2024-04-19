@@ -5,4 +5,6 @@ for file in range(0, 6):
     paths = int(in_file.readline())
     for i in range(paths):
         path = in_file.readline()
-        out_file.write(f"{path.count('W')} {path.count('D')} {path.count('S')} {path.count('A')}\n")
+        out_file.write(
+            f"{path.count('W')} {path.count('D')} {path.count('S')} {path.count('A')}\n"
+        )
