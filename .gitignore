@@ -342,3 +342,6 @@ fabric.properties
 
 # VS Code
 .vscode/*
+
+# CCC
+outputs
